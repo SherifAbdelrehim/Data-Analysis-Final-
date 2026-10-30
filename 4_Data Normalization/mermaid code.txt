@@ -1,0 +1,72 @@
+erDiagram
+    direction TB
+
+    Student ||--o{ Enrollment : registers
+    CourseOffering ||--o{ Enrollment : contains
+    CourseOffering ||--o{ Assessment : includes
+    Student ||--o{ StudentAssessment : receives
+    Assessment ||--o{ StudentAssessment : has
+    CourseOffering ||--o{ LearningResource : provides
+    Student ||--o{ StudentDailyInteraction : interacts
+    LearningResource ||--o{ StudentDailyInteraction : records
+
+    Student {
+        int StudentID PK
+        nvarchar(1) Gender
+        nvarchar(50) Region
+        nvarchar(50) HighestEducation
+        nvarchar(50) IMDBand
+        nvarchar(1) Disability
+    }
+
+    CourseOffering {
+        nvarchar(8) CourseOfferingCode PK "First module letter + presentation"
+        nvarchar(3) ModuleCode "Composite UQ with PresentationCode"
+        nvarchar(5) PresentationCode
+        int PresentationLengthDays
+    }
+
+    Enrollment {
+        int EnrollmentID PK "IDENTITY"
+        int StudentID FK "Composite UQ with CourseOfferingCode"
+        nvarchar(8) CourseOfferingCode FK
+        nvarchar(255) AgeBand
+        int PreviousAttempts
+        int StudiedCredits
+        nvarchar(20) FinalResult
+        int RegistrationDay
+        int UnregistrationDay
+    }
+
+    Assessment {
+        int AssessmentID PK
+        nvarchar(8) CourseOfferingCode FK
+        nvarchar(10) AssessmentType
+        int AssessmentDay
+        decimal(6_2) Weight
+    }
+
+    StudentAssessment {
+        int StudentAssessmentID PK "IDENTITY"
+        int StudentID FK "Composite UQ with AssessmentID"
+        int AssessmentID FK
+        int SubmittedDay
+        bit IsBanked
+        decimal(6_2) Score
+    }
+
+    LearningResource {
+        int SiteID PK
+        nvarchar(8) CourseOfferingCode FK
+        nvarchar(255) ActivityType
+        int WeekFrom
+        int WeekTo
+    }
+
+    StudentDailyInteraction {
+        bigint InteractionID PK "IDENTITY"
+        int StudentID FK "Composite UQ with SiteID and InteractionDay"
+        int SiteID FK
+        int InteractionDay
+        bigint SumClicks
+    }
